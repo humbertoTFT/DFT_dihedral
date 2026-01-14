@@ -8,7 +8,7 @@ submitted to Journal of Chemical Information and Modeling.
 ## Contents
 - Molecules structures (.gro)
 - Molecules topologies (.itp)
-- Example datasets
+- Each molecule files used in this work can be found by their name in their respective AA or CG section.
 - Scripts for reproducing the main results
 
 ## Requirements
