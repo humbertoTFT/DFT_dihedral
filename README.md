@@ -1,19 +1,19 @@
 # DFT_dihedral-fit_data
 
-# Title of the JCIM Manuscript
-
 This repository contains the code and data associated with the manuscript:
 
-"Full article title"
+"Discrete Fourier Transform Enables Automated Parametrization of Complex Dihedral Potentials in All-Atom and Coarse-Grained Force Fields"
 submitted to Journal of Chemical Information and Modeling.
 
 ## Contents
-- Code for model training and evaluation
+- Molecules structures (.gro)
+- Molecules topologies (.itp)
 - Example datasets
 - Scripts for reproducing the main results
 
 ## Requirements
-Python 3.9+
+Gaussian 16
+Gromacs 2021.x
 See requirements.txt
 
 ## Usage
