@@ -6,20 +6,13 @@ This repository contains the code and data associated with the manuscript:
 submitted to Journal of Chemical Information and Modeling.
 
 ## Contents
+Eahc molecule files can be found by their respective name in Data folder. 
 - Molecules structures (.gro)
-- Molecules topologies (.itp)
-- Each molecule files used in this work can be found by their name in their respective AA or CG section.
-- Scripts for reproducing the main results
-- - New
+- Final molecules topologies with DFT-fitted dihedral (.itp)
 
 ## Requirements
-Gaussian 16
-Gromacs 2021.x
-See requirements.txt
-
-## Usage
-python train.py
-python predict.py
+- Gaussian 16
+- Gromacs 2021.x
 
 ## Notes
 This repository is provided for academic, non-commercial use.
