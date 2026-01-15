@@ -1,4 +1,4 @@
-# DFT_dihedral-fit_data
+# DFT dihedral fit data
 
 This repository contains the code and data associated with the manuscript:
 
