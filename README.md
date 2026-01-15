@@ -11,7 +11,6 @@ Each molecule files can be found by their respective name in Data folder (in AA 
 - Final molecules topologies with DFT-fitted dihedral (.itp)
 
 ## Requirements
-- Gaussian 16
 - Gromacs 2021.x
 
 ## Notes
