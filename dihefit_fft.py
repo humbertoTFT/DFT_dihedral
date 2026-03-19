@@ -5,10 +5,8 @@ from numpy.linalg import norm, solve
 from numpy import fft, real, imag, sqrt, array, pi, dot, arccos, arctan2, cross, histogram, mean, std, cos, sin, arctan, isnan, polyfit, linspace,log, argmin, zeros, linalg, radians, argsort, degrees
 import matplotlib.pyplot as plt
 
-
 print("\nDIHEDRAL FIT WITH FOURIER ANALYSIS\n")
-MIN_TOP_FREQS = 3
-MAX_TOP_FREQS = 6
+
 lambda_f = 0.5
 
 CONV = 2625.49964  # kJ/mol
@@ -63,6 +61,8 @@ options = [
     ("-iter",   Option(str, 1, None, "Number fo iterations (Defautl = 5)")),
     ("-units",  Option(str, 1, None, "[kj (kJ/mol)/kc (kcal/mol)] (Default = kj)")),
     ("-th",     Option(str, 1, None, "[yes/no] Truncate functions multiplicity based on R-squared adj. criteria (Default = yes)")),
+    ("-pini",     Option(str, 1, None, "[yes/ared adj. criteria (Default = yes)")),
+    ("-pend",     Option(str, 1, None, "[yes/ared adj. criteria (Default = yes)")),
 ]
 
 # Parsing arguments
@@ -99,6 +99,17 @@ if options["-th"].value == None:
     THRESHOLD = 0.98
 else:
     THRESHOLD = float(options["-th"].value)
+
+if options["-pini"].value == None:
+    MIN_TOP_FREQS = 3
+else:
+    MIN_TOP_FREQS = int(options["-pini"].value)
+
+if options["-pend"].value == None:
+    MAX_TOP_FREQS = 6
+else:
+    MAX_TOP_FREQS = int(options["-pend"].value)
+
 
 class molecule:
 
@@ -807,7 +818,12 @@ else:
         shutil.copyfile("../../"+CRD,"molecule.gro")
 
         # ITERATION PROCEDURE /////////////////////////////////
-        NITER = int(options["-iter"].value)
+
+        if options["-iter"].value == None:
+            NITER = 20
+        else:
+            NITER = int(options["-iter"].value)
+
 
         MFRQS = MAX_TOP_FREQS - MIN_TOP_FREQS + 1
 
