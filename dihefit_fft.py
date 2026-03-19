@@ -1159,9 +1159,11 @@ else:
 
             OPT_COORDS.append([opt_xcrd,opt_ycrd,opt_zcrd])
 
+        MAIN_DIHEDRAL = [DIHEDRAL.dihe_jbonds[0],DIHEDRAL.dihe_axis[0],DIHEDRAL.dihe_axis[1],DIHEDRAL.dihe_kbonds[0]]
+
         gaussianINPUT(NAME+"_dihe",MOLECULE.atomtypes,OPT_COORDS,"opt=modredundant",
                 DIHEDRAL.n_proc,DIHEDRAL.memory,DIHEDRAL.method,DIHEDRAL.basis,
                 DIHEDRAL.charge,DIHEDRAL.multiplicity,
-                DIHEDRAL.indexes,DIHEDRAL.n_steps,DIHEDRAL.rotation)
+                MAIN_DIHEDRAL,DIHEDRAL.n_steps,DIHEDRAL.rotation)
 
 
