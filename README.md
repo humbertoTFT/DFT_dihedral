@@ -8,10 +8,12 @@ submitted to Journal of Chemical Information and Modeling.
 ## Contents
 Main script for AA dihedral FFT-fit
 - dihefit_fft.py
-- 
+  
 Molecules files with standard Gromacs format can be found by their respective name in Data folder (in AA or CG section).  
 - Molecules structures (.gro)
-- Final topologies with DFT-fitted dihedral (.itp)
+- Non-fitted topologies for molecules as example (.itp) 
+- Worked final topologies with DFT-fitted dihedral (.itp)
+- Parameters  file for script (.info)
 
 ## Requirements
 - Gaussian 16
