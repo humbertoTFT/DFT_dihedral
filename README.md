@@ -1,4 +1,4 @@
-# DFT dihedral fit data
+# FFT dihedral fit data
 
 This repository contains the data associated with the manuscript:
 
@@ -6,12 +6,19 @@ This repository contains the data associated with the manuscript:
 submitted to Journal of Chemical Information and Modeling.
 
 ## Contents
+Main script for AA dihedral FFT-fit
+- dihefit_fft.py
+- 
 Molecules files with standard Gromacs format can be found by their respective name in Data folder (in AA or CG section).  
 - Molecules structures (.gro)
 - Final topologies with DFT-fitted dihedral (.itp)
 
 ## Requirements
+- Gaussian 16
 - Gromacs 2021.x
+- Pyhon 3.x:
+  - Numpy
+  - Matplotlib
 
 ## Notes
 This repository is provided for academic, non-commercial use.
