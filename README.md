@@ -2,7 +2,7 @@
 
 This repository contains the data associated with the manuscript:
 
-"Discrete Fourier Transform Enables Automated Parametrization of Complex Dihedral Potentials in All-Atom and Coarse-Grained Force Fields"
+"Fast Fourier Transform Enables Automated Parametrization of Complex Dihedral Potentials in All-Atom and Coarse-Grained Force Fields"
 submitted to Journal of Chemical Information and Modeling.
 
 ## Contents
