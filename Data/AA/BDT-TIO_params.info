@@ -1,0 +1,25 @@
+
+# Dihedral parameters
+dihedral = 12 13 18 24 17 19
+axis = 13 18
+j_bonders = 12 17 
+k_bonders = 24 19
+
+rotation = 15
+
+# QM parameters
+charge = 0
+multiplicity = 1
+method = pm6 
+basis = 
+memory = 2000
+nproc = 16
+
+# MM parameters
+ff = gromos
+lj_fudge = 0.5
+qq_fudge = 0.5
+min_run = yes
+min_nst = 500
+min_dt = 0.001
+min_emtol = 200
