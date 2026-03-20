@@ -1,3 +1,18 @@
+"""
+FFT DIHEDRAL FITTING PROGRAM ---
+
+This script implements the methodology describe in:
+
+Flore-Trujillo, H., T.; Rodríguez-Segura, G., L.; Amador, C.; Dominguez, L.;
+Fast Fourier Transform Enables Automated Parametrization of Complex Dihedral 
+Potentials in All-Atom and Coarse-Grained Force Fields.
+
+Journal of Chemical Information and Modeling (submited).
+
+Please cite this work if you use this code
+
+"""
+
 import sys
 import os
 import shutil
@@ -10,7 +25,6 @@ print("\nDIHEDRAL FIT WITH FOURIER ANALYSIS\n")
 lambda_f = 0.5
 
 CONV = 2625.49964  # kJ/mol
-#CONV = 627.51      # kcal/mol
 
 
 plt.rcParams["figure.figsize"] = (20,10)
@@ -53,16 +67,16 @@ Index = """Index file with the following directives:
 options = [
     #   option           type         number  default       description
 
-    ("-crd",    Option(str, 1, None, "Input coordinates file: gro/pdb/prmtop")),
-    ("-top",    Option(str, 1, None, "Input topology file: itp/mdcrd/nc")),
-    ("-name",   Option(str, 1, None, "Output name for files")),
-    ("-file",   Option(str, 1, None, "File with simulation parameters")),
-    ("-maxf",   Option(str, 1, None, "Maximun multiplicity allowed for cosines functions (Default = 6)")),
-    ("-iter",   Option(str, 1, None, "Number fo iterations (Defautl = 5)")),
-    ("-units",  Option(str, 1, None, "[kj (kJ/mol)/kc (kcal/mol)] (Default = kj)")),
-    ("-th",     Option(str, 1, None, "[yes/no] Truncate functions multiplicity based on R-squared adj. criteria (Default = yes)")),
-    ("-pini",     Option(str, 1, None, "[yes/ared adj. criteria (Default = yes)")),
-    ("-pend",     Option(str, 1, None, "[yes/ared adj. criteria (Default = yes)")),
+    ("-crd",      Option(str, 1, None, "Input coordinates file: gro/pdb/prmtop")),
+    ("-top",      Option(str, 1, None, "Input topology file: itp/mdcrd/nc")),
+    ("-name",     Option(str, 1, None, "Output name for files")),
+    ("-file",     Option(str, 1, None, "File with simulation parameters")),
+    ("-maxf",     Option(str, 1, None, "Maximun multiplicity allowed for cosines functions (Default = 6)")),
+    ("-iter",     Option(str, 1, None, "Number fo iterations (Defautl = 20)")),
+    ("-units",    Option(str, 1, None, "[kj (kJ/mol)/kc (kcal/mol)] (Default = kj)")),
+    ("-th",       Option(str, 1, None, "R-squared threshold (Default = 0.98)")),
+    ("-pmin",     Option(str, 1, None, "Minimum number of allowed frequencies to be tested")),
+    ("-pmax",     Option(str, 1, None, "Maximum number of allowed frequencies to be tested ")),
 ]
 
 # Parsing arguments
@@ -100,15 +114,15 @@ if options["-th"].value == None:
 else:
     THRESHOLD = float(options["-th"].value)
 
-if options["-pini"].value == None:
+if options["-pmin"].value == None:
     MIN_TOP_FREQS = 3
 else:
-    MIN_TOP_FREQS = int(options["-pini"].value)
+    MIN_TOP_FREQS = int(options["-pmin"].value)
 
-if options["-pend"].value == None:
+if options["-pmax"].value == None:
     MAX_TOP_FREQS = 6
 else:
-    MAX_TOP_FREQS = int(options["-pend"].value)
+    MAX_TOP_FREQS = int(options["-pmax"].value)
 
 
 class molecule:
@@ -653,9 +667,9 @@ if not os.path.exists(PATH):
     os.mkdir(DIRECTORY)
     os.chdir(DIRECTORY)
 
-    print("INPUT FILE FOR OPTIMIZATION GENERATED")
-
-    print("MOLECULE.atomtypes",MOLECULE.atomtypes)
+    print("Folder for dihedral FFT-fit created: {}_dihe".format(NAME))
+    print()
+    print("Input file for QM optimization generated")
 
     gaussianINPUT(NAME+"_opt",MOLECULE.atomtypes,MOLECULE.coords,"opt freq",
             DIHEDRAL.n_proc,DIHEDRAL.memory,DIHEDRAL.method,DIHEDRAL.basis,
@@ -667,16 +681,16 @@ else:
     # Check if optimization output is in directory
 
     # QM - FOURIER ANALYSIS ///////////////////////////////////////////////////////////////////////
-    if os.path.isfile(NAME+"_dihe.out") or os.path.isfile(NAME+"_dihe.log"):
+    if os.path.isfile(NAME+"_scan.out") or os.path.isfile(NAME+"_scan.log"):
         print("Performing QM Fourier Analysis :::")
 
         with open("dihe_fit.log","w") as LOG:
             LOG.write("Dihedral i,j,k,l: {},{},{},{}\n".format(dihe_i,dihe_j,dihe_k,dihe_l))
 
-        if os.path.isfile(NAME+"_dihe.out"):
-            OUTPUT_DIHE = NAME+"_dihe.out"
+        if os.path.isfile(NAME+"_scan.out"):
+            OUTPUT_DIHE = NAME+"_scan.out"
         else:
-            OUTPUT_DIHE = NAME+"_dihe.log"
+            OUTPUT_DIHE = NAME+"_scan.log"
 
         QM_ENERGIES = array(readGaussianOutput(OUTPUT_DIHE,MOLECULE.n_atoms)[0])*CONV  # Convert to kJ/mol
         MIN_ENER = min(QM_ENERGIES)
@@ -1146,7 +1160,8 @@ else:
 
     # QM DIHEDRAL SCAN ////////////////////////////////////////////////////////////////
     elif os.path.isfile(NAME+"_opt.out") or os.path.isfile(NAME+"_opt.log"):
-        print("Run input for dihedral scan")
+        print("Run QM scan file: {}_scan.inp".format(NAME))
+        print("Then place the output file in {}_dihe with name {}_scan.(log/out)".format(NAME,NAME))
 
         if os.path.isfile(NAME+"_opt.out"):
             OUTPUT_OPT = NAME+"_opt.out"
@@ -1177,9 +1192,14 @@ else:
 
         MAIN_DIHEDRAL = [DIHEDRAL.dihe_jbonds[0],DIHEDRAL.dihe_axis[0],DIHEDRAL.dihe_axis[1],DIHEDRAL.dihe_kbonds[0]]
 
-        gaussianINPUT(NAME+"_dihe",MOLECULE.atomtypes,OPT_COORDS,"opt=modredundant",
+        gaussianINPUT(NAME+"_scan",MOLECULE.atomtypes,OPT_COORDS,"opt=modredundant",
                 DIHEDRAL.n_proc,DIHEDRAL.memory,DIHEDRAL.method,DIHEDRAL.basis,
                 DIHEDRAL.charge,DIHEDRAL.multiplicity,
                 MAIN_DIHEDRAL,DIHEDRAL.n_steps,DIHEDRAL.rotation)
 
+    elif not os.path.isfile(NAME+"_opt.out") or not os.path.isfile(NAME+"_opt.log"):
+
+        print("Run QM optimization file: {}_opt.inp".format(NAME))
+        print("Then place the output file in {}_dihe with name {}_opt.(log/out)".format(NAME,NAME))
+        gaussianINPUT(NAME+"_opt",MOLECULE.atomtypes,MOLECULE.coords,"opt freq",DIHEDRAL.n_proc,DIHEDRAL.memory,DIHEDRAL.method,DIHEDRAL.basis,DIHEDRAL.charge,DIHEDRAL.multiplicity," ",0,0)
 
