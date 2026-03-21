@@ -1,4 +1,4 @@
-# FFT dihedral fit data
+# FFT dihedral fitting
 
 This repository contains the data associated with the manuscript:
 
@@ -13,7 +13,7 @@ Molecules files with standard Gromacs format can be found by their respective na
 - Molecules structures (.gro)
 - Non-fitted topologies for molecules as example (.itp) 
 - Worked final topologies with FFT-fitted dihedrals (.itp)
-- Parameters  file for script (.info)
+- Parameters  file for AA dihedral fitting (.info)
 
 ## Requirements
 - Gaussian 16
