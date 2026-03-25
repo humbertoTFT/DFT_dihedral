@@ -13,7 +13,7 @@ Molecules files with standard Gromacs format can be found by their respective na
 - Molecules structures (.gro)
 - Non-fitted topologies for molecules as example (.itp) 
 - Parameters  file for AA dihedral fitting (.info)
-- Worked Gaussian QM optimizations and scans files (*.log/.out)
+- Worked Gaussian QM optimizations and scans files (.log/.out)
 
 ## Requirements
 - Gaussian 16
