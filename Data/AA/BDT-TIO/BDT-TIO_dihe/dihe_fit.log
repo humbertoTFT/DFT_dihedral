@@ -1,0 +1,285 @@
+Dihedral i,j,k,l: 12,13,18,24
+Dephase =     0.00
+Dephase =  -180.00
+Dephase =  -180.00
+Dephase =     0.00
+
+Iteration 01 00 
+
+Fourier coefficients:
+02 3.5236 0.9980
+
+Iteration 01 01 
+
+Fourier coefficients:
+02 5.3541 0.9974
+
+Iteration 01 02 
+
+Fourier coefficients:
+02 6.3049 0.9967
+
+Iteration 01 03 
+
+Fourier coefficients:
+02 6.7989 0.9986
+
+Iteration 01 04 
+
+Fourier coefficients:
+02 7.0554 0.9977
+
+Iteration 01 05 
+
+Fourier coefficients:
+02 7.1886 0.9967
+
+Iteration 01 06 
+
+Fourier coefficients:
+02 7.2578 0.9987
+
+Iteration 01 07 
+
+Fourier coefficients:
+02 7.2937 0.9977
+
+Iteration 01 08 
+
+Fourier coefficients:
+02 7.3126 0.9968
+
+Iteration 01 09 
+
+Fourier coefficients:
+01 7.7466 0.9960
+
+Iteration 01 10 
+
+Fourier coefficients:
+02 10.8642 0.9987
+
+Iteration 01 11 
+
+Fourier coefficients:
+02 9.1792 0.9977
+
+Iteration 01 12 
+
+Fourier coefficients:
+04 9.6347 0.0013
+
+Iteration 01 13 
+
+Fourier coefficients:
+02 11.9921 0.9978
+
+Iteration 01 14 
+
+Fourier coefficients:
+02 9.7656 0.9965
+
+Iteration 01 15 
+
+Fourier coefficients:
+02 8.6070 0.9984
+
+Iteration 01 16 
+
+Fourier coefficients:
+01 9.2954 0.9969
+
+Iteration 01 17 
+
+Fourier coefficients:
+02 11.5490 0.9978
+
+Iteration 01 18 
+
+Fourier coefficients:
+02 9.5352 0.9965
+
+Iteration 01 19 
+
+Fourier coefficients:
+04 9.9595 0.0015
+
+Iteration 01 20 
+
+Fourier coefficients:
+02 12.1831 0.9991
+
+Iteration 02 00 
+
+Fourier coefficients:
+02 3.5236 0.9980
+04 0.8312 0.0006
+
+Iteration 02 01 
+
+Fourier coefficients:
+01 1.6077 0.9958
+02 5.3791 0.9974
+
+Iteration 02 02 
+
+Fourier coefficients:
+02 6.3202 0.9967
+04 1.9539 0.0009
+
+Iteration 02 03 
+
+Fourier coefficients:
+01 2.3509 0.9964
+02 6.8732 0.9986
+
+Iteration 02 04 
+
+Fourier coefficients:
+02 7.0976 0.9977
+04 2.4522 0.0015
+
+Iteration 02 05 
+
+Fourier coefficients:
+01 2.7035 0.9970
+02 7.2949 0.9968
+
+Iteration 02 06 
+
+Fourier coefficients:
+02 7.3219 0.9991
+04 2.6898 0.0012
+
+Iteration 02 07 
+
+Fourier coefficients:
+01 2.8854 0.9990
+02 7.4155 0.9984
+
+Iteration 02 08 
+
+Fourier coefficients:
+02 7.3892 0.9975
+04 2.8131 0.0025
+
+Iteration 02 09 
+
+Fourier coefficients:
+01 2.9821 0.9978
+02 7.4550 0.9969
+
+Iteration 02 10 
+
+Fourier coefficients:
+02 7.4100 0.9988
+04 2.8738 0.0040
+
+Iteration 02 11 
+
+Fourier coefficients:
+01 3.0295 0.9966
+02 7.4678 0.9983
+
+Iteration 02 12 
+
+Fourier coefficients:
+02 7.4166 0.9973
+03 2.9492 0.9787
+
+Iteration 02 13 
+
+Fourier coefficients:
+02 7.3597 0.9964
+04 3.6100 0.0024
+
+Iteration 02 14 
+
+Fourier coefficients:
+01 3.8398 0.9981
+02 7.4621 0.9984
+
+Iteration 02 15 
+
+Fourier coefficients:
+02 7.4152 0.9974
+04 3.2822 0.0033
+
+Iteration 02 16 
+
+Fourier coefficients:
+01 3.4578 0.9962
+02 7.4802 0.9966
+
+Iteration 02 17 
+
+Fourier coefficients:
+02 7.4238 0.9985
+04 3.1148 0.0014
+
+Iteration 02 18 
+
+Fourier coefficients:
+01 3.2687 0.9971
+02 7.4790 0.9977
+
+Iteration 02 19 
+
+Fourier coefficients:
+02 7.4229 0.9967
+03 3.1379 0.9787
+
+Iteration 02 20 
+
+Fourier coefficients:
+02 7.3613 0.9986
+04 3.7341 0.0021
+
+Iteration 03 00 
+
+Fourier coefficients:
+01 0.8121 0.9956
+02 3.5236 0.9980
+04 0.8312 0.0006
+
+Iteration 03 01 
+
+Fourier coefficients:
+01 1.1957 0.9962
+02 5.3802 0.9974
+04 1.2016 0.0009
+
+Iteration 03 02 
+
+Fourier coefficients:
+01 1.3744 0.9968
+02 6.3585 0.9967
+04 1.3607 0.0013
+
+Iteration 03 03 
+
+Fourier coefficients:
+01 1.4553 0.9971
+02 6.8746 0.9985
+04 1.4244 0.0016
+
+Iteration 03 04 
+
+Fourier coefficients:
+01 1.4906 0.9978
+02 7.1467 0.9976
+04 1.4470 0.0020
+
+Iteration 03 05 
+
+Fourier coefficients:
+01 1.5062 0.9958
+02 7.2894 0.9967
+04 1.4540 0.0025
+
+Iteration 03 06 
+
+Fourier coefficients:
+01 1.5128 0.9966
+02 7.3641 0.9987
+03 1.5773 0.9776
