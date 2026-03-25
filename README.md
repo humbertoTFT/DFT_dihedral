@@ -12,8 +12,8 @@ Main script for AA dihedral FFT-fit
 Molecules files with standard Gromacs format can be found by their respective name in Data folder (in AA or CG section).  
 - Molecules structures (.gro)
 - Non-fitted topologies for molecules as example (.itp) 
-- Worked final topologies with FFT-fitted dihedrals (.itp)
 - Parameters  file for AA dihedral fitting (.info)
+- Worked Gaussian QM optimizations and scans files (*.log/.out)
 
 ## Requirements
 - Gaussian 16
