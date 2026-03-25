@@ -68,7 +68,7 @@ options = [
     ("-crd",      Option(str, 1, None, "Input coordinates file: (.gro)")),
     ("-top",      Option(str, 1, None, "Input topology file: (.itp)")),
     ("-name",     Option(str, 1, None, "Folder/files name")),
-    ("-file",     Option(str, 1, None, "File with program parameters")),
+    ("-file",     Option(str, 1, None, "File with program parameters (.info)")),
     ("-maxf",     Option(str, 1, None, "Maximun multiplicity allowed (Default = 6)")),
     ("-iter",     Option(str, 1, None, "Number of iterations (Defautl = 20)")),
     ("-units",    Option(str, 1, None, "[kj (kJ/mol)/kc (kcal/mol)] (Default = kj)")),
@@ -112,21 +112,27 @@ if options["-th"].value == None:
 else:
     THRESHOLD = float(options["-th"].value)
 
-if options["-pmin"].value == None:
-    MIN_TOP_FREQS = 3
+if options["-pini"].value == None:
+    MIN_TOP_FREQS = 1
 else:
-    MIN_TOP_FREQS = int(options["-pmin"].value)
+    MIN_TOP_FREQS = int(options["-pini"].value)
 
-if options["-pmax"].value == None:
+if options["-pend"].value == None:
     MAX_TOP_FREQS = 6
 else:
-    MAX_TOP_FREQS = int(options["-pmax"].value)
+    MAX_TOP_FREQS = int(options["-pend"].value)
 
 
 class molecule:
 
     def readGRO(INGRO):
-        ATOMTYPES = ["H","He","Li","Be","B","C","N","O","F","Ne","Si","P","S","Cl","Ar","Br"]
+        ATOMTYPES = [  "H","He","Li","Be","B","C","N","O","F","Ne","Na","Mg","Al","Si","P","S","Cl","Ar",
+                       "K","Ca","Sc","Ti","V","Cr","Mn","Fe","Co","Ni","Cu","Zn","Ga","Ge","As","Se","Br","Kr",
+                       "Rb","Sr","Y","Zr","Nb","Mo","Tc","Ru","Rh","Pd","Ag","Cd","In","Sn","Sb","Te","I","Xe",
+                       "Cs","Ba","La","Ce","Pr","Nd","Pm","Sm","Eu","Gd","Tb","Dy","Ho","Er","Tm","Yb","Lu",
+                       "Hf","Ta","W","Re","Os","Ir","Pt","Au","Hg","Tl","Pb","Bi","Po","At","Rn",
+                       "Fr","Ra","Ac","Th","Pa","U","Np","Pu","Am","Cm","Bk","Cf","Es","Fm","Md","No","Lr",
+                       "Rf","Db","Sg","Bh","Hs","Mt","Ds","Rg","Cn","Nh","Fl","Mc","Lv","Ts","Og" ]
         gro_atoms = []
         gro_cords = []
         gro_atomtypes = []
@@ -668,6 +674,8 @@ if not os.path.exists(PATH):
     print("Folder for dihedral FFT-fit created: {}_dihe".format(NAME))
     print()
     print("Input file for QM optimization generated")
+    print("Run QM optimization file: {}_opt.inp".format(NAME))
+    print("Then place the output file in {}_dihe with name {}_opt.(log/out)".format(NAME,NAME))
 
     gaussianINPUT(NAME+"_opt",MOLECULE.atomtypes,MOLECULE.coords,"opt freq",
             DIHEDRAL.n_proc,DIHEDRAL.memory,DIHEDRAL.method,DIHEDRAL.basis,
@@ -1013,15 +1021,6 @@ else:
                 DIHE_fitted = plot_fourier_discrete(fourier_pot,ROT_ANGLS)
                 QM_fitted = array(DIHE_fitted) + diff_mins + array(MM_ENERGIES)
 
-                plt.scatter(STD_ANGLS,DIHE_PROFILE,label="$V_i+1$",s=100)
-                plt.plot(X_fplot,array(Y_fplot)+diff_mins,label="V_tors")
-                plt.legend(bbox_to_anchor=(1.05,1.0),loc="upper left")
-                plt.xticks([0,60,120,180,240,300,360])
-                plt.grid()
-                plt.tight_layout()
-                plt.savefig("potential-iter{:02d}-{:02d}".format(frequencies,iteration))
-                plt.clf()
-
                 for mm in range(len(MM_ENERGIES)):
                     if MM_ENERGIES[mm] > 300.0:
                         MM_ENERGIES[mm] = 0.0
@@ -1132,9 +1131,9 @@ else:
 
 
 
-        plt.imshow(R2_matrix[:,1:],cmap="viridis",interpolation="nearest")
-        plt.colorbar()
-        plt.savefig("R2_plot.png")
+        #plt.imshow(R2_matrix[:,1:],cmap="viridis",interpolation="nearest")
+        #plt.colorbar()
+        #plt.savefig("R2_plot.png")
 
         print()
         print("FFT DIHEDRAL FIT ::::::")
@@ -1154,15 +1153,17 @@ else:
             print("Fiiting procedure reached intended R-squared threshold")
             print("Threshold = {:.4f}".format(THRESHOLD))
             print("Frequencies required:", BEST_P)
+            print("Final topology and scan plot can be found in: {}_dihe".format(NAME))
             print("Writing final topology to:")
             print("{}_dihefit-FFT.itp".format(NAME))
-            shutil.copyfile("{}-iter{:02d}-{:02d}.itp".format(NAME,BEST_P,MAX_ITER_REACH),"../../{}_dihefit-FFT.itp".format(NAME))
-            shutil.copyfile("scan_profiles_{:02d}-{:02d}.png".format(BEST_P,MAX_ITER_REACH),"../../{}_dihefit-FFT.png".format(NAME))
+            shutil.copyfile("{}-iter{:02d}-{:02d}.itp".format(NAME,BEST_P,MAX_ITER_REACH),"../{}_dihefit-FFT.itp".format(NAME))
+            shutil.copyfile("scan_profiles_{:02d}-{:02d}.png".format(BEST_P,MAX_ITER_REACH),"../{}_dihefit-FFT.png".format(NAME))
 
     # QM DIHEDRAL SCAN ////////////////////////////////////////////////////////////////
     elif os.path.isfile(NAME+"_opt.out") or os.path.isfile(NAME+"_opt.log"):
+        print("Input file for QM dihedral scan generated")
         print("Run QM scan file: {}_scan.inp".format(NAME))
-        print("Then place the output file in {}_dihe with name {}_opt.(log/out)".format(NAME,NAME))
+        print("Then place the output file in {}_dihe with name {}_scan.(log/out)".format(NAME,NAME))
 
         if os.path.isfile(NAME+"_opt.out"):
             OUTPUT_OPT = NAME+"_opt.out"
