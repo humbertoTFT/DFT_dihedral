@@ -26,10 +26,8 @@ lambda_f = 0.5
 
 CONV = 2625.49964  # kJ/mol
 
-
 plt.rcParams["figure.figsize"] = (20,10)
 plt.rcParams.update({'font.size':28})
-
 
 # PARSING COMMAND LINE ARGUMENTS //////////////////////////////////////////////////////////////////
 
@@ -67,16 +65,16 @@ Index = """Index file with the following directives:
 options = [
     #   option           type         number  default       description
 
-    ("-crd",      Option(str, 1, None, "Input coordinates file: gro/pdb/prmtop")),
-    ("-top",      Option(str, 1, None, "Input topology file: itp/mdcrd/nc")),
-    ("-name",     Option(str, 1, None, "Output name for files")),
-    ("-file",     Option(str, 1, None, "File with simulation parameters")),
-    ("-maxf",     Option(str, 1, None, "Maximun multiplicity allowed for cosines functions (Default = 6)")),
-    ("-iter",     Option(str, 1, None, "Number fo iterations (Defautl = 20)")),
+    ("-crd",      Option(str, 1, None, "Input coordinates file: (.gro)")),
+    ("-top",      Option(str, 1, None, "Input topology file: (.itp)")),
+    ("-name",     Option(str, 1, None, "Folder/files name")),
+    ("-file",     Option(str, 1, None, "File with program parameters")),
+    ("-maxf",     Option(str, 1, None, "Maximun multiplicity allowed (Default = 6)")),
+    ("-iter",     Option(str, 1, None, "Number of iterations (Defautl = 20)")),
     ("-units",    Option(str, 1, None, "[kj (kJ/mol)/kc (kcal/mol)] (Default = kj)")),
     ("-th",       Option(str, 1, None, "R-squared threshold (Default = 0.98)")),
-    ("-pmin",     Option(str, 1, None, "Minimum number of allowed frequencies to be tested")),
-    ("-pmax",     Option(str, 1, None, "Maximum number of allowed frequencies to be tested ")),
+    ("-pini",     Option(str, 1, None, "Minimum number of allowed frequencies to be tested (Default = 1)")),
+    ("-pend",     Option(str, 1, None, "Maximum number of allowed frequencies to be tested (Default = 6)")),
 ]
 
 # Parsing arguments
@@ -1087,6 +1085,7 @@ else:
 
                 with open("{}-iter{:02d}-{:02d}.itp".format(NAME,frequencies,iteration+1),"a") as DITP:
 
+                    DITP.write("\n; FFT-fitted dihedrals -------\n")
                     DITP.write("\n[ dihedrals ]\n")
 
                     # DIHEDRAL IJKL ::::::::::::::::::::::::::::::::::
@@ -1145,23 +1144,25 @@ else:
             print("R-squared threshold not reached")
             print("Best R-squared score:",BEST_R_squared)
             print("Frequencies required:", frequencies)
-            print("Writing final .itp to:")
+            print("Writing final topology to:")
             print("{}_dihefit-FFT.itp".format(NAME))
             shutil.copyfile("{}-iter{:02d}-{:02d}.itp".format(NAME,BEST_P,BEST_ITER),"../../{}_dihefit-FFT.itp".format(NAME))
+            shutil.copyfile("scan_profiles_{:02d}-{:02d}.png".format(BEST_P,BEST_ITER),"../../{}_dihefit-FFT.png".format(NAME))
 
         elif THRESHOLD_REACH == 1:
 
             print("Fiiting procedure reached intended R-squared threshold")
             print("Threshold = {:.4f}".format(THRESHOLD))
             print("Frequencies required:", BEST_P)
-            print("Writing final .itp to:")
+            print("Writing final topology to:")
             print("{}_dihefit-FFT.itp".format(NAME))
             shutil.copyfile("{}-iter{:02d}-{:02d}.itp".format(NAME,BEST_P,MAX_ITER_REACH),"../../{}_dihefit-FFT.itp".format(NAME))
+            shutil.copyfile("scan_profiles_{:02d}-{:02d}.png".format(BEST_P,MAX_ITER_REACH),"../../{}_dihefit-FFT.png".format(NAME))
 
     # QM DIHEDRAL SCAN ////////////////////////////////////////////////////////////////
     elif os.path.isfile(NAME+"_opt.out") or os.path.isfile(NAME+"_opt.log"):
         print("Run QM scan file: {}_scan.inp".format(NAME))
-        print("Then place the output file in {}_dihe with name {}_scan.(log/out)".format(NAME,NAME))
+        print("Then place the output file in {}_dihe with name {}_opt.(log/out)".format(NAME,NAME))
 
         if os.path.isfile(NAME+"_opt.out"):
             OUTPUT_OPT = NAME+"_opt.out"
