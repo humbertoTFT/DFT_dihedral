@@ -17,12 +17,13 @@ import sys
 import os
 import shutil
 from numpy.linalg import norm, solve
-from numpy import fft, real, imag, sqrt, array, pi, dot, arccos, arctan2, cross, histogram, mean, std, cos, sin, arctan, isnan, polyfit, linspace,log, argmin, zeros, linalg, radians, argsort, degrees
+from numpy import fft, real, imag, sqrt, array, pi, dot, arccos, arctan2, cross, histogram, mean, std, cos, sin, arctan,exp, isnan, polyfit, linspace,log, argmin, zeros, linalg, radians, argsort, degrees, ones,block, concatenate
 import matplotlib.pyplot as plt
+import numpy as np
 
 print("\nDIHEDRAL FIT WITH FOURIER ANALYSIS\n")
 
-lambda_f = 0.5
+lambda_f = 0.35
 
 CONV = 2625.49964  # kJ/mol
 
@@ -449,17 +450,24 @@ def readGaussianOutput(GOUT,NATOMS):
     DIHEDRAL = "D({},{},{},{})".format(dihe_i,dihe_j,dihe_k,dihe_l)
     for line_angle in GDATA:
         if "!" in line_angle and DIHEDRAL in line_angle and not "Scan" in line_angle:
+            print(line_angle)
+            print(line_angle.split()[3])
             angle = float(line_angle.split()[3])
+            print(angle)
             ANGLES.append(angle)
+
+    print("ANGLES:")
+    print(ANGLES)
 
 
     # Search for positive angle closer to zero :::
-    idx_min = 0
+    idx_zero = 0
     min_ang = abs(ANGLES[0])
     for ang in range(len(ANGLES)):
         angle = abs(ANGLES[ang])
+        print(angle,idx_zero)
         if angle < min_ang:
-            idx_min = ang 
+            idx_zero = ang 
             min_ang = angle
 
 
@@ -467,19 +475,19 @@ def readGaussianOutput(GOUT,NATOMS):
     ANGLES2 = []
     ENERGIES2 = []
     GEOMETRIES2 = []
-    for ax in range(idx_min,N):
+    for ax in range(idx_zero,N):
         ANGLE = ANGLES[ax]
         ANGLES2.append(ANGLE)
         ENERGIES2.append(ENERGIES[ax])
         GEOMETRIES2.append(GEOMETRIES[ax])
-    for ay in range(0,idx_min):
+    for ay in range(0,idx_zero):
         ANGLE = ANGLES[ay]
         ANGLES2.append(ANGLE+360.0)
         ENERGIES2.append(ENERGIES[ay])
         GEOMETRIES2.append(GEOMETRIES[ay])
 
 
-    return ENERGIES2, GEOMETRIES2, ANGLES2
+    return ENERGIES2, GEOMETRIES2, ANGLES2, idx_zero
 
 ATOMIX = {1:"H",2:"He",
           3:"Li",4:"Be",5:"B",6:"C",7:"N",8:"O",9:"F",10:"Ne",
@@ -723,7 +731,12 @@ else:
         OPT_GEOMS = array(readGaussianOutput(OUTPUT_DIHE,MOLECULE.n_atoms)[1])
         ROT_ANGLS = array(readGaussianOutput(OUTPUT_DIHE,MOLECULE.n_atoms)[2])
         QM_ENERGS = array(readGaussianOutput(OUTPUT_DIHE,MOLECULE.n_atoms)[0])
+        IDX_ZERO = readGaussianOutput(OUTPUT_DIHE,MOLECULE.n_atoms)[3]
+        
         STD_ANGLS = [ROT_ANGLS[0]+x*DIHEDRAL.rotation for x in range(len(ROT_ANGLS))]
+
+        print("ROT_ANGLS:")
+        print(ROT_ANGLS)
 
 
         # MEASURE DIHEDRALS PHASE SHIFT :::::::::::::::::::::::::::::::::
@@ -751,7 +764,15 @@ else:
         N_PATHS = len(PATHS)
         PATHS_PHASE = [0]
 
+        print("PATHS:",PATHS)
+        print("PATHS_MASS:",PATHS_MASS)
+        print("WEIGHTS:",WEIGHTS)
+
+        PATHS_ANGLES = [[] for p in range(N_PATHS)]
+
         for path  in range(1,N_PATHS):
+
+            print("Path:",PATHS[path])
 
             GAMMAS = []
 
@@ -764,6 +785,7 @@ else:
             
             rr = 0
             for geom in OPT_GEOMS:
+
 
                 crds_i = array([geom[path_i-1][1],geom[path_i-1][2],geom[path_i-1][3]])
                 crds_j = array([geom[path_j-1][1],geom[path_j-1][2],geom[path_j-1][3]])
@@ -778,7 +800,10 @@ else:
                 v4 = crds_i2 - crds_j
                 v5 = crds_l2 - crds_k
 
+
                 # Dihedral i-j-k-l :::::::::::::::::::::::::::::::::::::::::::::::
+
+                """
 
                 n21 = cross(v2,v1)
                 n23 = cross(v3,v2)
@@ -789,13 +814,27 @@ else:
                     dihe_ijkl = 0.0
                 else:
                     dihe_ijkl = arccos(arg_ijkl)*(180.0/pi)
+                print(dihe_ijkl)
                 n12 = cross(v1,v2)
                 sign_dihe_ijkl = dot(n12,v3)
                 if sign_dihe_ijkl < 0:
                     dihe_ijkl = 360.0 - dihe_ijkl
+                """
+                v2 /= linalg.norm(v2)
+
+                v = v1 - dot(v1,v2)*v2
+                w = v3 - dot(v3,v2)*v2
+
+                x = dot(v,w)
+                y = dot(cross(v2,v),w)
+
+                dihe_ijkl = degrees(arctan2(y,x)) % 360
+
+
 
                 # Dihedral i2-j-k-l2 :::::::::::::::::::::::::::::::::::::::::::::::
 
+                """
                 n24 = cross(v2,v4)
                 n25 = cross(v5,v2)
                 arg_i2jkl2 = dot(n24,n25)/(norm(n24)*norm(n25))
@@ -809,6 +848,20 @@ else:
                 sign_dihe_i2jkl2 = dot(n42,v5)
                 if sign_dihe_i2jkl2 < 0:
                     dihe_i2jkl2 = 360.0 - dihe_i2jkl2
+                """
+
+                v = v4 - dot(v4,v2)*v2
+                w = v5 - dot(v5,v2)*v2
+
+                x = dot(v,w)
+                y = dot(cross(v2,v),w)
+
+                dihe_i2jkl2 = degrees(arctan2(y,x)) % 360
+
+
+                print(dihe_ijkl,dihe_i2jkl2)
+
+                PATHS_ANGLES[path].append(dihe_i2jkl2)
 
                 D_ijkl = radians(dihe_ijkl)
                 D_i2jkl2 = radians(dihe_i2jkl2)
@@ -825,7 +878,21 @@ else:
             circ_mean = arctan2(mean(sin(GAMMAS)),mean(cos(GAMMAS)))
 
             PATHS_PHASE.append(degrees(circ_mean))
-        
+
+        print("PATHS:",PATHS)
+        print("PATHS_PHASE:",PATHS_PHASE)
+
+
+        print("STD_ANGLS:")
+        print(STD_ANGLS)
+
+        for stdang in STD_ANGLS:
+            PATHS_ANGLES[0].append(stdang)
+        for PaTh in range(N_PATHS):
+            print(PATHS[PaTh])
+            print(PATHS_ANGLES[PaTh])
+
+
 
         with open("dihe_fit.log","a") as LOG:
             for pathh in range(N_PATHS):
@@ -1065,10 +1132,83 @@ else:
                 STEPSIZE = DIHEDRAL.rotation
 
                 DEPHASED_POTS = []
+                V_pots = []
+                V_pots.append(fourier_pot)
 
                 for P in range(1,N_PATHS):
                     fourier_dephased = dephase_FFT(fourier_pot,PATHS_PHASE[P],DIHEDRAL.n_steps-1,STEPSIZE)
                     DEPHASED_POTS.append(fourier_dephased)
+                    V_pots.append(fourier_dephased)
+
+                MATRIX_V = zeros((DIHEDRAL.n_steps+1,N_PATHS))
+                VECTOR_V = zeros((DIHEDRAL.n_steps+1,1))
+
+
+
+                for i in range(DIHEDRAL.n_steps + 1):
+                    phi = radians(STD_ANGLS[i])
+                    for p in range(N_PATHS):
+                        v_pot = V_pots[p]
+                        y = 0
+                        for frec in v_pot:
+                            ampl = v_pot[frec][0]
+                            phas = v_pot[frec][1]
+                            y += ampl*(1+cos(frec*phi - phas))
+                        MATRIX_V[i][p] = y
+
+
+
+                
+                MATRIX_V = MATRIX_V - MATRIX_V.min(axis=0)
+
+                QM_zeroth = array(QM_ENERGIES)-min(QM_ENERGIES)
+                W_low = exp(-0.2*sqrt(QM_zeroth))
+                W_diag = sqrt(W_low)
+
+                MATRIX_V = MATRIX_V*W_diag[:,None]
+
+                MATRIX_V = MATRIX_V/linalg.norm(MATRIX_V,axis=0)
+                
+
+                VECTOR_V = zeros(DIHEDRAL.n_steps + 1)
+
+
+                for j in range(DIHEDRAL.n_steps + 1):
+                    VECTOR_V[j] = DIHE_PROFILE[j] - min(DIHE_PROFILE)
+
+                VECTOR_V = VECTOR_V*W_diag
+
+                VECTOR_V = VECTOR_V/linalg.norm(VECTOR_V)
+
+
+                MATRIX_V = MATRIX_V - MATRIX_V.mean(axis=0)
+                VECTOR_V = VECTOR_V - VECTOR_V.mean()
+
+                M,H = MATRIX_V.shape
+
+                lambda_reg = 1.0
+
+                #ATA = MATRIX_V.T @ MATRIX_V + lambda_reg*np.eye(MATRIX_V.shape[1])
+                ATA = MATRIX_V.T @ MATRIX_V + lambda_reg*np.eye(MATRIX_V.shape[1])
+                ATy = MATRIX_V.T @ VECTOR_V
+
+                ONES = ones((H,1))
+
+                KKT = block([
+                    [ATA,ONES],
+                    [ONES.T,zeros((1,1))]
+                ])
+
+                RHS = concatenate([ATy,[1]])
+
+                SOL = linalg.solve(KKT,RHS)
+                
+                Ws = SOL[:H]
+                print("Ws:",Ws)
+                print("Sum Ws =",Ws.sum())
+
+
+                #print(1/0)
 
                 # Write topology with dihedral potential :::::::::::::::::
                 with open("{}-iter{:02d}-{:02d}.itp".format(NAME,frequencies,iteration+1),"w") as FITP:
@@ -1081,6 +1221,11 @@ else:
                     DICT.write(str(fourier_pot)+"\n")
 
                 G = 1/N_PATHS
+                print("N_PATHS:",N_PATHS)
+                print("WEIGHTS:",WEIGHTS)
+
+                #for w in range(N_PATHS):
+                #    Ws[w] = Ws[w]*WEIGHTS[w]
 
                 with open("{}-iter{:02d}-{:02d}.itp".format(NAME,frequencies,iteration+1),"a") as DITP:
 
@@ -1089,7 +1234,9 @@ else:
 
                     # DIHEDRAL IJKL ::::::::::::::::::::::::::::::::::
                     for c in fourier_pot:
-                        A = fourier_pot[c][0]*G
+                        #A = fourier_pot[c][0]*G
+                        #A = fourier_pot[c][0]*WEIGHTS[0]
+                        A = fourier_pot[c][0]*Ws[0]
                         PHI = fourier_pot[c][1]*180.0 % 360
                         DITP.write("   {:>5}{:>5}{:>5}{:>5}   9   {:>4.0f}   {:.4f}   {:.0f}\n".format(dihe_i,dihe_j,dihe_k,dihe_l,PHI,A,c))
                     DITP.write("\n")
@@ -1103,7 +1250,9 @@ else:
 
                         # DIHEDRAL I2JKL2 ::::::::::::::::::::::::::::::::::
                         for c in DEPHASED_POTS[DP-1]:
-                            A = DEPHASED_POTS[DP-1][c][0]*G
+                            #A = DEPHASED_POTS[DP-1][c][0]*G
+                            #A = DEPHASED_POTS[DP-1][c][0]*WEIGHTS[DP]
+                            A = DEPHASED_POTS[DP-1][c][0]*Ws[DP]
                             PHI = DEPHASED_POTS[DP-1][c][1]*180.0 % 360
                             DITP.write("   {:>5}{:>5}{:>5}{:>5}   9   {:>4.0f}   {:.4f}   {:.0f}\n".format(p_i,p_j,p_k,p_l,PHI,A,c))
                         DITP.write("\n")
