@@ -23,7 +23,7 @@ import numpy as np
 
 print("\nDIHEDRAL FIT WITH FOURIER ANALYSIS\n")
 
-lambda_f = 0.35
+lambda_f = 0.2
 
 CONV = 2625.49964  # kJ/mol
 
@@ -74,8 +74,8 @@ options = [
     ("-iter",     Option(str, 1, None, "Number of iterations (Defautl = 20)")),
     ("-units",    Option(str, 1, None, "[kj (kJ/mol)/kc (kcal/mol)] (Default = kj)")),
     ("-th",       Option(str, 1, None, "R-squared threshold (Default = 0.98)")),
-    ("-pini",     Option(str, 1, None, "Minimum number of allowed frequencies to be tested (Default = 1)")),
-    ("-pend",     Option(str, 1, None, "Maximum number of allowed frequencies to be tested (Default = 6)")),
+    ("-fini",     Option(str, 1, None, "Minimum number of allowed frequencies to be tested (Default = 1)")),
+    ("-fend",     Option(str, 1, None, "Maximum number of allowed frequencies to be tested (Default = 6)")),
 ]
 
 # Parsing arguments
@@ -113,15 +113,15 @@ if options["-th"].value == None:
 else:
     THRESHOLD = float(options["-th"].value)
 
-if options["-pini"].value == None:
+if options["-fini"].value == None:
     MIN_TOP_FREQS = 1
 else:
-    MIN_TOP_FREQS = int(options["-pini"].value)
+    MIN_TOP_FREQS = int(options["-fini"].value)
 
-if options["-pend"].value == None:
+if options["-fend"].value == None:
     MAX_TOP_FREQS = 6
 else:
-    MAX_TOP_FREQS = int(options["-pend"].value)
+    MAX_TOP_FREQS = int(options["-fend"].value)
 
 
 class molecule:
